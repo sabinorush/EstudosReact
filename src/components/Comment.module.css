@@ -75,8 +75,6 @@
     align-items: center;
     
     transition: color 0.1s;
-
-    
 }
 
 .commentBox footer button:hover {
