@@ -1,32 +1,45 @@
+import { format, formatDistanceToNow } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
+
 import { Avatar } from "./Avatar";
 import { Comment } from "./Comment";
+
 import styles from "./Post.module.css";
 
-export function Post() {
+export function Post({ author, publishedAt, content }) {
+    const publishedDateFormated = format(publishedAt, "d 'de' MMMM 'às' H:mm'h'", {
+        locale: ptBR,
+    })
+
+    const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+        locale: ptBR,
+        addSuffix: true,
+    })
+
     return (
         <article className={styles.post}>
             <header>
                 <div className={styles.author}>
-                    <Avatar src="https://github.com/sabinorush.png" />
+                    <Avatar src={author.avatarUrl} />
                     <div className={styles.authorInfo}>
-                        <strong>Gustavo Sabino</strong>
-                        <span>Web Developer</span>
+                        <strong>{author.name}</strong>
+                        <span>{author.role}</span>
                     </div>
                 </div>
 
-                <time title="20 de outubro às 21h21" dateTime="2022-10-22 21:21:30">Publicado há 1h</time>
+                <time title={publishedDateFormated} dateTime={publishedAt.toISOString()}>
+                    {publishedDateRelativeToNow}
+                </time>
             </header>
 
             <div className={styles.content}>
-                <p>Fala galeraa 👋</p>
-                <p>Acabei de subir mais um projeto no meu portifa. É um projeto que fiz no NLW Return, evento da Rocketseat. O nome do projeto é DoctorCare 🚀</p>
-                <p>👉{' '}<a href="#">Jane.design/doctorcare</a></p>
-                <p>
-                    <a href="#"></a>
-                    <a href="#">#novoprojeto</a>{' '}
-                    <a href="#">#nlw</a>{' '}
-                    <a href="#">#rocketseat</a>{' '}
-                </p>
+                {content.map(line => {
+                    if (line.type === 'pharagraph') {
+                        return <p>{line.content}</p>
+                    } else if (line.type === 'link') {
+                        return <p><a href=''>{line.content}</a></p>
+                    }
+                })}
             </div>
 
             <form className={styles.commentForm}>
@@ -42,9 +55,9 @@ export function Post() {
             </form>
 
             <div className={styles.commentList}>
-            <Comment />
-            <Comment />
-            <Comment />
+                <Comment />
+                <Comment />
+                <Comment />
             </div>
         </article>
     )
